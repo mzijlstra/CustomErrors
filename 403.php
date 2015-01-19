@@ -15,7 +15,7 @@
 		</div>
 
 		<div class="msg">
-			You should really make an index.html page <br />
+			This error is often caused by not having an index.html or index.php page<br />
 			- Prof. Zijlstra
 		</div>
 	</body>
