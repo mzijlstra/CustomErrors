@@ -20,7 +20,7 @@
 
 		<div class="msg">
 			Something bad happened during the execution of this file.<br />
-			Check your http-error.log for more details!
+			Check your log/error.log on the server for more details!
 		</div>
 	</body>
 </html>
