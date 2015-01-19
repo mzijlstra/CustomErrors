@@ -1,0 +1,37 @@
+#!/usr/bin/perl
+
+# this script appends log lines to error.log in user's home/log directories
+# apache excutes it because in apache.ini we set:
+# ErrorLog "|/usr/local/bin/error_log"  
+
+my %is_open = (); # File handle cache
+$|=1;
+open($default, '>>/var/log/apache2/error.log');
+
+while (my $log = <>) {
+
+    # also print to default log
+    select ($default);
+    $|=1;
+    print $log;
+
+    # write to home dir log if appropriate
+    if ($log =~ m!/home/(.+?)/!) {
+        my $u = $1;
+        unless ($is_open{$u}) {
+            my $fh;
+            open($fh, '>>/home/' . $u . '/log/error.log') or next;
+            $is_open{$u} = $fh;
+        }
+
+        select ($is_open{$u});
+        $|=1;
+        print $log;
+
+    } 
+}
+
+close $default;
+foreach my $h (keys %is_open) {
+    close $h;
+}

@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+
+# this script appends log lines to access.log in user's home/log directories
+# apache excutes it because in apache.ini we set:
+# CustomLog "|/usr/local/bin/access_log" combined  
+
+my %is_open = (); # File handle cache
+$|=1;
+open($default, '>>/var/log/apache2/access.log');
+
+while (my $log = <>) {
+
+    # write everything to default log
+    select ($default);
+    $|=1;
+    print $log;
+
+    # write to home dir log if appropriate
+    if ($log =~ m!/~(.+?)/!) {
+        my $u = $1;
+        unless ($is_open{$u}) {
+            my $fh;
+            open($fh, '>>/home/' . $u . '/log/access.log') or next;
+            $is_open{$u} = $fh;
+        }
+
+        select ($is_open{$u});
+        $|=1;
+        print $log;
+
+    } 
+
+}
+
+close $default;
+foreach my $h (keys %is_open) {
+    close $h;
+}
