@@ -3,7 +3,7 @@
 
 function __mumstudents_shutdown_handler() {
 	$last_error = error_get_last();
-	if ($last_error['type'] === E_ERROR || $last_error['type'] === E_PARSE ) {
+	if ($last_error['type'] !== E_WARNING && $last_error['type'] !== E_NOTICE ) {
 		// show the custom error page
 		include("/var/www/error/500.php");
 	}
